@@ -9,6 +9,8 @@ import java.util.Scanner;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import library.standard.Book;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 /**
  *
@@ -18,13 +20,16 @@ public class Compos {
     
     public static void main(String[] args){
         
+        ArrayList<Book> list = new ArrayList<Book>(); // Notre arrayList
+               
         Scanner output = new Scanner(System.in);
-        
+
         Book book = new Book();
         Categorie cat = new Categorie();
         Author author = new Author();
+        boolean composer = false;
         
-        
+        do{
         System.out.println("##########");
         System.out.println("## MENU ##");
         System.out.println("##########");
@@ -33,28 +38,41 @@ public class Compos {
         System.out.println("2. Display all the book"); // Display all the book contained in our library
         System.out.println("3. Search for an author"); // Display all the book of the author stored in our library 
         System.out.println("4. Search for a book"); // Display all the information of the book
+        System.out.println("5. Exit application");
         System.out.println("");
         System.out.println("Enter the number of the option you want : ");
         int res = output.nextInt();
         
         switch(res){
             case 1:
-                book.createBook();
-                book.LI.add(book);
                 
+                // Something missing here, to create a book and then we had it 
+                try{
+                    book.createBook();
+                }catch(Exception e){
+                    System.out.println("Erreur main, case 1 : book.creatBook()");
+                    System.out.println(e);
+                }
+                
+                try{
+                    list.add(book);
+                }catch(Exception e){
+                    System.out.println("Erreur main, case 1: list.add(book)");
+                    System.out.println("e : " + e);
+                }
+                ListIterator<Book> iterator = list.listIterator(); // Notre itérateur avec la méthode HasNext();
+                try{
+                    while(iterator.hasNext()){
+                    iterator.next().displayBooks();
+                }
+                }catch(Exception e){
+                    System.out.println("Erreur main, case1 : while(iterator.hasNext())"); 
+                    System.out.println("e : " + e);
+                }    
                 break;
                 
             case 2:
-                
-                System.out.println("Entrer une date yyy mm dd");
-                String r= output.nextLine();
-                
-                if(book.entrerDateDebut(r)){
-                    System.out.println("vrai");
-                }
-                else{
-                    System.out.println("Faux");
-                }
+                            
                 
                 
                 break;
@@ -64,16 +82,19 @@ public class Compos {
                 
             case 4 :
                 break;
+            case 5:
+                System.out.println("================================");
+                System.out.println("================================");
+                System.out.println("===== HAVE A VERY NICE DAY =====");
+                System.out.println("================================");
+                System.out.println("================================");
+                composer=true;
+                break;
         }
                 
         
-        
-        System.out.println("Size: " + book.LI.size());
-        
-        for(int i=0; i<book.LI.size(); i++){
-            System.out.println("RES : " + book.LI.get(i).getBookName());
-        }
-        
+     
+        }while(composer==false);
     }
         
       

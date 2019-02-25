@@ -10,6 +10,7 @@ import java.util.Scanner;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import library.standard.Author;
 
 /**
  *
@@ -18,42 +19,43 @@ import java.util.ArrayList;
 public class Book {
 
     Scanner output = new Scanner(System.in);
-    //Arraylist 
-    ArrayList<Book> LI = new ArrayList<Book>();
 
     int idBook;
     String bookName;
     int price;
     boolean bought;
+    boolean startReading;
     boolean readB;
     String dateDPattern;
     Date dateD;
     String dateFPattern;
     Date dateF;
     String lang;
-    Author unAuteur;
-    Categorie uneCat;
-    // idAuthor ici 
-    // idCat ici
+    Author anAuthor;
+    Categorie aCat;
 
     public Book() {
     }
 
-    public Book(int idBook, String bookName, int price, boolean bought, boolean readB, String dateDPattern, Date dateD, String dateFPattern, Date dateF, String lang, Author unAuteur, Categorie uneCat) {
+    public Book(int idBook, String bookName, int price, boolean bought, boolean startReading, boolean readB, String dateDPattern, Date dateD, String dateFPattern, Date dateF, String lang, Author unAuteur, Categorie uneCat) {
         this.idBook = idBook;
         this.bookName = bookName;
         this.price = price;
         this.bought = bought;
+        this.startReading = startReading;
         this.readB = readB;
         this.dateDPattern = dateDPattern;
         this.dateD = dateD;
         this.dateFPattern = dateFPattern;
         this.dateF = dateF;
         this.lang = lang;
-        this.unAuteur = unAuteur;
-        this.uneCat = uneCat;
+        this.anAuthor = unAuteur;
+        this.aCat = uneCat;
     }
 
+    // ===================
+    // ===== GETTERS =====
+    // ===================
     public int getIdBook() {
         return idBook;
     }
@@ -68,6 +70,10 @@ public class Book {
 
     public boolean getBought() {
         return bought;
+    }
+
+    public boolean getStartReading() {
+        return startReading;
     }
 
     public boolean getReadB() {
@@ -94,6 +100,17 @@ public class Book {
         return lang;
     }
 
+    public Author getAuthor() {
+        return anAuthor;
+    }
+
+    public Categorie getCat() {
+        return aCat;
+    }
+
+    // ===================
+    // ===== SETTERS =====
+    // ===================
     public void setIdBook(int id_book) {
         this.idBook = id_book;
     }
@@ -108,6 +125,10 @@ public class Book {
 
     public void setBought(boolean is_bought) {
         this.bought = is_bought;
+    }
+
+    public void setStartReading(boolean start_reading) {
+        this.startReading = start_reading;
     }
 
     public void setReadB(boolean is_read) {
@@ -134,14 +155,30 @@ public class Book {
         this.lang = en_ou_fr;
     }
 
+    public void setAuthor(Author authorName) {
+        this.anAuthor = authorName;
+    }
+
+    public void setCat(Categorie cat) {
+        this.aCat = cat;
+    }
+
+    // ===================
+    // ===== METHODS =====
+    // ===================
     public void createBook() {
 
+        /*
+        * Add author chosing
+        * Add categorie chosing
+        * If "have you started to read the book" is false then "Have you finish the book yet" isn't asked.
+        
+         */
         boolean bo = false;
         boolean boo = false;
 
-        System.out.println("Enter the book name : ");
+        System.out.println("Enter the book name : ");// regex
         this.setBookName(output.nextLine());
-        // regex?
 
         System.out.println("Have you bought the book? (yes / no) ");
         String rp = output.nextLine();
@@ -153,19 +190,28 @@ public class Book {
             this.setBought(false);
         }
 
-        do {
-            System.out.println("Enter the date you started to read the book (yyyy/mm/dd) : ");
-            String chaine = output.nextLine();
-            if (entrerDateDebut(chaine)) {
-                bo = true;
-            } else {
-                bo = false;
-            }
-        } while (bo == false);
+        output.nextLine();
+
+        System.out.println("Have you start reading this book? (yes/no)");
+        String rep = output.nextLine();
+        if (rep.charAt(0) == 'y') {
+            this.setStartReading(true);
+            do {
+                System.out.println("Enter the date you started to read the book (yyyy/mm/dd) : ");
+                String chaine = output.nextLine();
+                if (entrerDateDebut(chaine)) {
+                    bo = true;
+                } else {
+                    bo = false;
+                }
+            } while (bo == false);
+        } else {
+            this.setStartReading(false);
+        }
 
         System.out.println("Have you finish the book yet? (yes / no) ");
         String pr = output.nextLine();
-        if (rp.charAt(0) == 'y') {
+        if (pr.charAt(0) == 'y') {
             this.setReadB(true);
         } else {
             this.setReadB(false);
@@ -184,8 +230,13 @@ public class Book {
         }
 
         //How to deal with both en and fr being type in ?
-        System.out.println("Enter the language in wich you read it (en/fr): ");
-        this.setLang(output.nextLine());
+            System.out.println("Enter the language in wich you read it (en/fr): ");
+            this.setLang(output.nextLine());
+
+        /*        // Finish the author name and cat name here.
+        System.out.println("Who was the author of " + this.getBookName() + " ?"); // regex
+        this.setAuthor(output.nextLine().toString());
+         */
     }
 
     public boolean entrerDateDebut(String chaine) {
@@ -200,7 +251,7 @@ public class Book {
             System.out.println("book::entrerDateDebut, success");
         } catch (Exception e) {
             System.out.println(e);
-            System.out.println("book::enterDateDebut, catch failed");
+            System.out.println("class Book, méthode : enterDateDebut(), catch failed");
         }
         return bol;
     }
@@ -208,29 +259,67 @@ public class Book {
     public boolean entrerDateFin(String chaine) {
         boolean lob = false;
         String Pattern = "yyyy/mm/dd";
-        SimpleDateFormat st = new SimpleDateFormat();
+        SimpleDateFormat st = new SimpleDateFormat(Pattern);
 
         this.setDateFPattern(chaine);
         try {
-            this.setDateF(st.parse(dateFPattern));
-            System.out.println("book::entrerDateFin, success");
+            dateF = st.parse(dateFPattern);
         } catch (Exception e) {
-            System.out.println("Méthode Book:entrerDateFin, erreur catch :");
+            System.out.println("Class Book, méthode entrerDateFin(), catch failed:");
             System.out.println(e);
         }
         return lob;
     }
 
     public void displayBooks() {
-    }
+        /*
+        * Display author
+        * Display categorie
+        * Fix the date display bug 
+         */
+        System.out.println("================");
+        System.out.println("===== BOOK =====");
+        System.out.println("================");
 
-    public void addBook() {
-        // 1-> use the add function of the arraylist to add book to the arraylsit
+        System.out.println("Name : " + this.getBookName());
+
+        if (this.getPrice() == 0) {
+            System.out.println("Ptice : unknown");
+        } else {
+            System.out.println("Price : " + this.getPrice() + "€");
+        }
+
+        if (this.getBought() == true) {
+            System.out.println("Bought : yes");
+        } else {
+            System.out.println("Bought : no");
+        }
+
+        if (this.getReadB() == true) {
+            System.out.println("Book finished : yes");
+        } else {
+            System.out.println("Book finished : no");
+        }
+
+        if (this.getDateD() == null) {
+            System.out.println("Date start : not started yet");
+        } else {
+            System.out.println("Date start : " + this.getDateD());
+        }
+
+        if (this.getDateF() == null) {
+            System.out.println("Date end : not finished yet");
+        } else {
+            System.out.println("Date end : " + this.getDateF());
+        }
+        System.out.println  ("Language : " + this.getLang());
+
+        //System.out.println("Author : " + this.getAuthor());
+        //System.out.println("Categorie : " + this.getCat());
     }
 
     public void deleteBook() {
         // 1-> Use some function of the arraylist to suppress a particular book of the arraylist
     }
 
-    
 }
